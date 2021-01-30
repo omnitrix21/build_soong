@@ -2227,6 +2227,21 @@ func (c *Module) DepsMutator(actx android.BottomUpMutatorContext) {
 		deps.LateSharedLibs, variantLateNdkLibs = RewriteLibs(c, &snapshotInfo, actx, ctx.Config(), deps.LateSharedLibs)
 		deps.ReexportSharedLibHeaders, _ = RewriteLibs(c, &snapshotInfo, actx, ctx.Config(), deps.ReexportSharedLibHeaders)
 
+		rewriteHeaderLibs := func(list []string) (newHeaderLibs []string) {
+			newHeaderLibs = []string{}
+			for _, entry := range list {
+				// Replace device_kernel_headers with generated_kernel_headers
+				// for inline kernel building
+				if entry == "device_kernel_headers" {
+					newHeaderLibs = append(newHeaderLibs, "generated_kernel_headers")
+					continue
+				}
+				newHeaderLibs = append(newHeaderLibs, entry)
+			}
+			return newHeaderLibs
+		}
+		deps.HeaderLibs = rewriteHeaderLibs(deps.HeaderLibs)
+
 		for idx, lib := range deps.RuntimeLibs {
 			deps.RuntimeLibs[idx] = RewriteSnapshotLib(lib, GetSnapshot(c, &snapshotInfo, actx).SharedLibs)
 		}
