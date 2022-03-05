@@ -280,6 +280,10 @@ org\.ifaa\.android\.manager.*
 # LineageOS
 vendor.lineage.touch.*
 
+# NV adds
+com\.nvidia
+com\.nvidia\..*
+
 # QC adds
 com.qualcomm.qti
 com.quicinc.tcmiface
